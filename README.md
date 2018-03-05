@@ -1,24 +1,25 @@
-# README
+# Price Compare
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Compare the product price in Wellcome(頂好), Amart(愛買)
 
-Things you may want to cover:
+# Getting Started
 
-* Ruby version
+### Install required ruby gems
 
-* System dependencies
+bundle the ruby gems
 
-* Configuration
+```
+$ bundle install
+```
 
-* Database creation
+## The website is working now.
 
-* Database initialization
+```
+$ rails s
+```
 
-* How to run the test suite
+## Notice
 
-* Services (job queues, cache servers, search engines, etc.)
+Only support compare six different kinds of products in two on-line market. And no use scheduler to update price in a fixed time, but request for the real-price now by each request.
 
-* Deployment instructions
-
-* ...
+And the project is not under test covered.
