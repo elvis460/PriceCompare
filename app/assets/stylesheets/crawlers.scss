@@ -1,0 +1,17 @@
+// Place all the styles related to the crawlers controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.price{
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+h4{
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
