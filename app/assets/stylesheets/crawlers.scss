@@ -6,12 +6,27 @@
 	text-decoration: none;
 }
 
-a:hover {
-  text-decoration: none;
+a{
+	font-weight: bold;
+	:hover {
+  	text-decoration: none;
+	}
 }
 
 h4{
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+.pro-img-box{
+	margin-top: 15px
+}
+
+.navbar{
+	border: 0px !important
+}
+
+.nav-btn-ground{
+	background-color: #F79D2D
 }

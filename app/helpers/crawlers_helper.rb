@@ -6,6 +6,8 @@ module CrawlersHelper
     # 頂好
     request = RestClient.get(@@wellcome_domain + url).body
 
+    # get title, image, link, price but no page_links
+    # (due to wellcome could query big amount of data by set request params)
     w_title = Nokogiri::HTML(request).css('.item-name').map(&:text)
     w_link = Nokogiri::HTML(request).css('.item-name a').map{|tag| tag['href']}
     w_price = Nokogiri::HTML(request).css('.item-price-container').map(&:text)
@@ -13,6 +15,7 @@ module CrawlersHelper
     wellcome = {}
 
     w_title.each_with_index do |item, index|
+      # use product seller as hash key (wellcome always put product seller in a [])
       type = item.scan(/\[([^\)]+)\]/).last.first
       wellcome[type] = [] if !wellcome[type]
       wellcome[type] << ({title: item, link: w_link[index], price: w_price[index]})
@@ -25,19 +28,21 @@ module CrawlersHelper
     # 愛買
     request = RestClient.get(@@amart_domain + url).body
     amart = {}
-
+    # get title, image, link, price and page_links
     a_title = Nokogiri::HTML(request).css('h5 a').map(&:text)
     a_image = Nokogiri::HTML(request).css('p a img').map{|tag| tag['src']}
     a_link = Nokogiri::HTML(request).css('h5 a').map{|tag| tag['href']}
     a_price = Nokogiri::HTML(request).css('span.price').map(&:text)
     links = Nokogiri::HTML(request).css('.page_number a').map{|tag| tag['href']}.uniq
 
+    # initail the amart hash
     amart[:title] = a_title
     amart[:image] = a_image
     amart[:link] = a_link
     amart[:price] = a_price
 
     if links.present?
+      # handle if there are many pages
       links.each do |url|
         request = RestClient.get(@@amart_domain + url).body
         amart[:title] << Nokogiri::HTML(request).css('h5 a').map(&:text)
@@ -52,19 +57,20 @@ module CrawlersHelper
 
   def product_match(amart, wellcome)
     result = {}
-
     amart[:title].each_with_index do |title, amart_index|
+      # user wellcome key(product seller) to check matched product
       wellcome.keys.each do |type|
         next if !title.include?(type)
 
         wellcome[type].each_with_index do |item, wellcome_index|
+          # split the amrat title to check whether the produt is sold on wellcome too
           if item[:title].include?(title.gsub(type, "").split('-').last.split(/(\d+)/)[0])
+            # build if there is no matched product created
             if !result[item[:title]]
               result[item[:title]] = [] 
             else
               break
             end
-
             result[item[:title]] << {from: 'wellcome', title: item[:title], link: item[:link], price: item[:price]}
             result[item[:title]] << {from: 'amart', title: amart[:title][amart_index], link: amart[:link][amart_index], price: amart[:price][amart_index], image: amart[:image][amart_index]}
             next
@@ -91,6 +97,7 @@ module CrawlersHelper
   end
 
   def query_type_check(type)
+    # the supported six products links in both sites
     case type
       when 'wash_powder'
         wellcome_request_url = "product/listByCategory/126?query=128&"
